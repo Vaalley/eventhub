@@ -43,3 +43,4 @@ docker-compose logs -f backend
 
 - **Frontend**: http://localhost:5173
 - **Backend API**: http://localhost:3000
+- **Nginx Proxy**: http://localhost (frontend) AND http://localhost/api (backend)
