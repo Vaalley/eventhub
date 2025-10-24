@@ -1,0 +1,90 @@
+services:
+  # MongoDB Database
+  mongodb:
+    build:
+      context: ./mongo
+    container_name: eventhub-mongodb
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+    networks:
+      - eventhub-network
+    restart: unless-stopped
+
+  # Redis Cache
+  redis:
+    build:
+      context: ./redis
+    container_name: eventhub-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - eventhub-network
+    restart: unless-stopped
+
+  # Backend API
+  backend:
+    build:
+      context: ./back
+    container_name: eventhub-backend
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./back:/app
+      - /app/node_modules
+    environment:
+      - NODE_ENV=development
+      - PORT=3000
+      - MONGODB_URI=mongodb://mongodb:27017/eventhub
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+    depends_on:
+      - mongodb
+      - redis
+    networks:
+      - eventhub-network
+    restart: unless-stopped
+
+  # Frontend
+  frontend:
+    build:
+      context: ./front
+    container_name: eventhub-frontend
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./front:/app
+      - /app/node_modules
+    environment:
+      - NODE_ENV=development
+      - VITE_API_URL=http://localhost/api
+    depends_on:
+      - backend
+    networks:
+      - eventhub-network
+    restart: unless-stopped
+
+  # Nginx Reverse Proxy
+  nginx:
+    build:
+      context: ./nginx
+    container_name: eventhub-nginx
+    ports:
+      - "80:80"
+    depends_on:
+      - frontend
+      - backend
+    networks:
+      - eventhub-network
+    restart: unless-stopped
+
+networks:
+  eventhub-network:
+    driver: bridge
+
+volumes:
+  mongodb_data:
+  redis_data:
