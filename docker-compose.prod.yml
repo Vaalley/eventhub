@@ -1,0 +1,87 @@
+services:
+  # MongoDB Database
+  mongodb:
+    build:
+      context: ./mongo
+    container_name: eventhub-mongodb-prod
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data_prod:/data/db
+    networks:
+      - eventhub-network-prod
+    restart: always
+    environment:
+      - MONGO_INITDB_DATABASE=eventhub
+
+  # Redis Cache
+  redis:
+    build:
+      context: ./redis
+    container_name: eventhub-redis-prod
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data_prod:/data
+    networks:
+      - eventhub-network-prod
+    restart: always
+
+  # Backend API (Production)
+  backend:
+    build:
+      context: ./back
+      target: production
+    container_name: eventhub-backend-prod
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      - MONGODB_URI=mongodb://mongodb:27017/eventhub
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+    depends_on:
+      - mongodb
+      - redis
+    networks:
+      - eventhub-network-prod
+    restart: always
+
+  # Frontend (Production with Nginx)
+  frontend:
+    build:
+      context: ./front
+      target: production
+    container_name: eventhub-frontend-prod
+    ports:
+      - "8080:80"
+    environment:
+      - NODE_ENV=production
+    depends_on:
+      - backend
+    networks:
+      - eventhub-network-prod
+    restart: always
+
+  # Nginx Reverse Proxy
+  nginx:
+    build:
+      context: ./nginx
+    container_name: eventhub-nginx-prod
+    ports:
+      - "80:80"
+    depends_on:
+      - frontend
+      - backend
+    networks:
+      - eventhub-network-prod
+    restart: always
+
+networks:
+  eventhub-network-prod:
+    driver: bridge
+
+volumes:
+  mongodb_data_prod:
+  redis_data_prod:
