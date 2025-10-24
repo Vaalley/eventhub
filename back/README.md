@@ -1,4 +1,4 @@
-# EventHub Backend
+# EventHub - Backend
 
 Backend for the EventHub application built with Node.js and Express.
 
