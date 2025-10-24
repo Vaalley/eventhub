@@ -15,6 +15,8 @@ EventHub is a web platform for event management and ticketing. It enables organi
 ### Prerequisites
 - Docker Desktop installed and running
 
+## Development Mode
+
 ### Start All Services
 ```bash
 docker-compose up
@@ -39,8 +41,34 @@ docker-compose logs -f
 docker-compose logs -f backend
 ```
 
-## Access the Application
+### Access the Application (Development)
 
-- **Frontend**: http://localhost:5173
-- **Backend API**: http://localhost:3000
+- **Frontend**: http://localhost:5173 (Vite dev server with HMR)
+- **Backend API**: http://localhost:3000 (Nodemon with hot reload)
 - **Nginx Proxy**: http://localhost (frontend) AND http://localhost/api (backend)
+
+## Production Mode
+
+### Build and Start Production Services
+```bash
+docker-compose -f docker-compose.prod.yml up --build -d
+```
+
+### Stop Production Services
+```bash
+docker-compose -f docker-compose.prod.yml down
+```
+
+### Access the Application (Production)
+
+- **Frontend**: http://localhost:8080 (Nginx serving static files)
+- **Backend API**: http://localhost:3000 (Node.js production mode)
+- **Nginx Proxy**: http://localhost
+
+### Production Features
+
+- **Frontend**: Optimized static files served by Nginx (~25MB)
+- **Backend**: Production dependencies only, non-root user
+- **Security**: Non-root containers, production environment variables
+- **Performance**: Minified assets, optimized builds
+- **Persistence**: Separate production volumes for data

@@ -29,6 +29,7 @@ services:
   backend:
     build:
       context: ./back
+      target: development
     container_name: eventhub-backend
     ports:
       - "3000:3000"
@@ -52,6 +53,7 @@ services:
   frontend:
     build:
       context: ./front
+      target: development
     container_name: eventhub-frontend
     ports:
       - "5173:5173"
