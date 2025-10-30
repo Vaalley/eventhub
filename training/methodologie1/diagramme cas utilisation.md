@@ -15,6 +15,7 @@ rectangle "Module Participants" {
   usecase "Se connecter (participant)" as UCLoginParticipant
   usecase "Rechercher événement" as UCSearch
   usecase "Réserver billet" as UCBook
+  usecase "Payer" as UCPay
   usecase "Consulter historique" as UCHistory
   usecase "Évaluer événement" as UCRate
 }
@@ -40,6 +41,7 @@ Participant --> UCRegister
 Participant --> UCLoginParticipant
 Participant --> UCSearch
 Participant --> UCBook
+Participant --> UCPay
 Participant --> UCHistory
 Participant --> UCRate
 
@@ -61,6 +63,8 @@ UCBook ..> UCSearch : <<include>>
 UCHistory ..> UCLoginParticipant : <<include>>
 UCRate ..> UCHistory : <<extend>>
 UCSearch ..> UCLoginParticipant : <<include>>
+UCBook ..> UCPay : <<include>>
+UCPay ..> UCLoginParticipant : <<include>>
 
 UCCreate ..> UCLoginOrganizer : <<include>>
 UCManageDetails ..> UCLoginOrganizer : <<include>>
