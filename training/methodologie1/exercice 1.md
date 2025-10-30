@@ -13,38 +13,38 @@ Pour chaque catégorie, listez 3-4 fonctionnalités essentielles.
 
 ## Réponse
 
-## Gestion des utilisateurs
-- Création de compte avec validation par email.
-- Connexion et déconnexion.
-- Modification des informations de profil de base.
-- Notification email pour confirmer les actions importantes.
+1. Gestion des utilisateurs
+- Inscription et authentification sécurisée (participant, organisateur, administrateur)
+- Profils personnalisables avec historique des événements
+- Système de notifications (email, in-app)
+- Gestion des préférences et centres d'intérêt
 
-## Gestion des événements
-- Création d'un événement avec titre, date et tarif de base.
-- Mise à jour ou suppression des événements créés.
-- Gestion du statut publié ou brouillon.
-- Consultation de la liste des inscrits.
+2. Gestion des événements (organisateurs)
+- Création et configuration d'événements (lieu, date, capacité, tarifs)
+- Gestion des billets et des formules tarifaires
+- Publication et promotion des événements
+- Suivi des ventes et des inscriptions
 
-## Découverte et réservation
-- Parcourir les événements par catégorie ou date.
-- Consulter une fiche événement avec description et horaires.
-- Réserver un billet en ligne et recevoir une confirmation email.
-- Accéder à son billet électronique depuis l'espace personnel.
+3. Découverte et réservation (participants)
+- Recherche multicritères d'événements (lieu, date, catégorie, prix)
+- Système de recommandations personnalisées
+- Processus de réservation et paiement sécurisés
+- Gestion des billets électroniques et QR codes
 
-## Gestion des lieux
-- Ajouter un lieu avec son adresse et sa capacité.
-- Modifier ou supprimer un lieu si besoin.
-- Associer un événement à un lieu disponible.
-- Vérifier rapidement la disponibilité d'un lieu avant publication.
+4. Gestion des lieux
+- Référencement des lieux d'événements
+- Informations sur la capacité, les équipements, l'accessibilité
+- Gestion des disponibilités
+- Cartographie et indications d'accès
 
-## Administration
-- Afficher la liste des événements en cours et à venir.
-- Activer ou suspendre un compte organisateur.
-- Modifier les catégories d'événements.
-- Ajuster quelques paramètres globaux (nom du site, contact).
+5. Administration
+- Tableau de bord d'administration globale
+- Modération des événements et des utilisateurs
+- Gestion des catégories d'événements
+- Configuration des paramètres globaux
 
-## Analyse et statistiques
-- Afficher le nombre de billets vendus par événement.
-- Suivre les réservations du jour en un coup d'œil.
-- Comparer la fréquentation des événements récents.
-- Exporter un récapitulatif simple des ventes au format CSV.
+6. Analyse et statistiques
+- Suivi des affluences et des réservations en temps réel
+- Tableaux de bord dynamiques pour les organisateurs
+- Calcul de métriques de performance des événements
+- Génération de rapports avancés

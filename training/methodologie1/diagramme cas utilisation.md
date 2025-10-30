@@ -3,7 +3,6 @@
 ```plantuml
 @startuml
 left to right direction
-skinparam packageStyle rectangle
 
 actor "Participant" as Participant
 actor "Organisateur" as Organisateur

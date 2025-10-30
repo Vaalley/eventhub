@@ -3,7 +3,9 @@
 Énoncé :
 Identifiez tous les acteurs (internes et externes) qui interagissent avec la plateforme EventHub. Classez-les par type et définissez leur rôle principal.
 
-## Acteurs principaux (internes)
+## Réponse
+
+### Acteurs principaux (internes)
 
 | Acteur | Rôle principal |
 | --- | --- |
@@ -11,7 +13,7 @@ Identifiez tous les acteurs (internes et externes) qui interagissent avec la pla
 | Organisateur | Personne ou entreprise qui crée, publie et gère les événements. |
 | Administrateur | Gestionnaire de la plateforme qui supervise les opérations et modère les contenus. |
 
-## Acteurs secondaires (externes)
+### Acteurs secondaires (externes)
 
 | Acteur | Rôle principal |
 | --- | --- |
