@@ -1,5 +1,7 @@
 # Diagramme de cas d'utilisation - Participants & Organisateurs
 
+A copier/coller sur https://www.plantuml.com/plantuml
+
 ```plantuml
 @startuml
 left to right direction
