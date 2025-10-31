@@ -64,3 +64,19 @@ docker-compose -f docker-compose.prod.yml down
 - **Frontend**: http://localhost:8080 (Nginx serving static files)
 - **Backend API**: http://localhost:3000 (Node.js production mode)
 - **Nginx Proxy**: http://localhost
+
+## Diagrams
+
+This project includes several UML diagrams to document the system architecture and workflows:
+
+- [Use Case Diagram](training/methodologie1/diagramme%20cas%20utilisation.md) - Complete use cases for all user types
+- [Activity Diagram - Ticket Reservation](training/methodologie1/diagramme%20activit%C3%A9%20r%C3%A9servation.md) - End-to-end reservation flow
+- [Sequence Diagram - Conference Creation](training/methodologie1/diagramme%20s%C3%A9quence%20cr%C3%A9ation%20conf%C3%A9rence.md) - Event creation process
+- [Class Diagram](training/methodologie1/diagramme%20classe%20global.md) - Global class structure
+- [Entity-Relationship Diagram](training/methodologie1/diagramme%20mod%C3%A8le%20entit%C3%A9%20relation.md) - Database schema
+
+### Viewing the Diagrams
+All diagrams are created with PlantUML. To view them:
+1. Copy the PlantUML code from any diagram file
+2. Paste it at [https://www.plantuml.com/plantuml](https://www.plantuml.com/plantuml)
+3. The diagram will render automatically

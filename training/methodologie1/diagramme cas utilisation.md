@@ -1,4 +1,4 @@
-# Diagramme de cas d'utilisation - Participants & Organisateurs
+# Diagramme de cas d'utilisation - Participants, Organisateurs et Administrateurs
 
 A copier/coller sur https://www.plantuml.com/plantuml
 
