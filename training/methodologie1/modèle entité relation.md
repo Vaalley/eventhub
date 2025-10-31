@@ -1,4 +1,4 @@
-# Diagramme Modèle Entité-Relation - EventHub
+# Modèle Entité-Relation - EventHub
 
 A copier/coller sur https://www.plantuml.com/plantuml
 
@@ -7,7 +7,7 @@ A copier/coller sur https://www.plantuml.com/plantuml
 title EventHub - Modèle Entité-Relation
 
 ' --- Entité Utilisateur ---
-entity User {
+entity user {
   * **id** : UUID <<PK>>
   --
   * email : varchar(255) <<UNIQUE>>
@@ -20,7 +20,7 @@ entity User {
 }
 
 ' --- Entité Événement ---
-entity Event {
+entity event {
   * **id** : UUID <<PK>>
   --
   * title : varchar(200)
@@ -36,7 +36,7 @@ entity Event {
 }
 
 ' --- Entité Lieu ---
-entity Venue {
+entity venue {
   * **id** : UUID <<PK>>
   --
   * name : varchar(200)
@@ -47,7 +47,7 @@ entity Venue {
 }
 
 ' --- Entité Catégorie ---
-entity Category {
+entity category {
   * **id** : UUID <<PK>>
   --
   * name : varchar(100)
@@ -55,7 +55,7 @@ entity Category {
 }
 
 ' --- Entité Type de Billet ---
-entity TicketType {
+entity ticketType {
   * **id** : UUID <<PK>>
   --
   * event_id : UUID <<FK>>
@@ -66,7 +66,7 @@ entity TicketType {
 }
 
 ' --- Entité Réservation ---
-entity Booking {
+entity booking {
   * **id** : UUID <<PK>>
   --
   * user_id : UUID <<FK>>
@@ -77,7 +77,7 @@ entity Booking {
 }
 
 ' --- Entité Billet ---
-entity Ticket {
+entity ticket {
   * **id** : UUID <<PK>>
   --
   * booking_id : UUID <<FK>>
@@ -87,7 +87,7 @@ entity Ticket {
 }
 
 ' --- Entité Évaluation ---
-entity Review {
+entity review {
   * **id** : UUID <<PK>>
   --
   * event_id : UUID <<FK>>
@@ -98,7 +98,7 @@ entity Review {
 }
 
 ' --- Entité Notification ---
-entity Notification {
+entity notification {
   * **id** : UUID <<PK>>
   --
   * user_id : UUID <<FK>>
@@ -109,7 +109,7 @@ entity Notification {
 }
 
 ' --- Entité Paiement ---
-entity Payment {
+entity payment {
   * **id** : UUID <<PK>>
   --
   * booking_id : UUID <<FK>>
@@ -121,22 +121,22 @@ entity Payment {
 }
 
 ' --- Relations ---
-User ||--o{ Booking : "fait"
-User ||--o{ Review : "rédige"
-User ||--o{ Notification : "reçoit"
+user ||--o{ booking : "fait"
+user ||--o{ review : "rédige"
+user ||--o{ notification : "reçoit"
 
-Event ||--o{ TicketType : "contient"
-Event ||--o{ Booking : "concerne"
-Event ||--o{ Review : "reçoit"
-Event }o--|| Venue : "a lieu à"
-Event }o--|| Category : "appartient à"
+event ||--o{ ticketType : "contient"
+event ||--o{ booking : "concerne"
+event ||--o{ review : "reçoit"
+event }o--|| venue : "a lieu à"
+event }o--|| category : "appartient à"
 
-Venue ||--o{ Event : "accueille"
+venue ||--o{ event : "accueille"
 
-TicketType ||--o{ Ticket : "génère"
+ticketType ||--o{ ticket : "génère"
 
-Booking ||--o{ Ticket : "inclut"
-Booking ||--|| Payment : "requiert"
+booking ||--o{ ticket : "inclut"
+booking ||--|| payment : "requiert"
 
 @enduml
 ```

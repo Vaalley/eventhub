@@ -7,7 +7,7 @@ A copier/coller sur https://www.plantuml.com/plantuml
 title EventHub - Diagramme de classe global
 
 ' --- Utilisateurs ---
-class User {
+class user {
   -id: UUID
   -email: String
   -password: String
@@ -24,14 +24,14 @@ class User {
   +getHistory(): Booking[]
 }
 
-enum UserRole {
+enum userRole {
   PARTICIPANT
   ORGANIZER
   ADMIN
 }
 
 ' --- Événements ---
-class Event {
+class event {
   -id: UUID
   -title: String
   -description: String
@@ -49,7 +49,7 @@ class Event {
   +addTicketType(ticket: TicketType): void
 }
 
-enum EventStatus {
+enum eventStatus {
   DRAFT
   PUBLISHED
   CANCELLED
@@ -57,7 +57,7 @@ enum EventStatus {
 }
 
 ' --- Lieux ---
-class Venue {
+class venue {
   -id: UUID
   -name: String
   -address: String
@@ -71,7 +71,7 @@ class Venue {
 }
 
 ' --- Types de billets ---
-class TicketType {
+class ticketType {
   -id: UUID
   -eventId: UUID
   -name: String
@@ -85,7 +85,7 @@ class TicketType {
 }
 
 ' --- Réservations ---
-class Booking {
+class booking {
   -id: UUID
   -userId: UUID
   -eventId: UUID
@@ -99,7 +99,7 @@ class Booking {
   +sendConfirmation(): Boolean
 }
 
-enum BookingStatus {
+enum bookingStatus {
   PENDING
   CONFIRMED
   CANCELLED
@@ -107,7 +107,7 @@ enum BookingStatus {
 }
 
 ' --- Billets ---
-class Ticket {
+class ticket {
   -id: UUID
   -bookingId: UUID
   -ticketTypeId: UUID
@@ -120,7 +120,7 @@ class Ticket {
 }
 
 ' --- Évaluations ---
-class Review {
+class review {
   -id: UUID
   -eventId: UUID
   -userId: UUID
@@ -134,7 +134,7 @@ class Review {
 }
 
 ' --- Catégories ---
-class Category {
+class category {
   -id: UUID
   -name: String
   -description: String
@@ -144,7 +144,7 @@ class Category {
 }
 
 ' --- Notifications ---
-class Notification {
+class notification {
   -id: UUID
   -userId: UUID
   -type: NotificationType
@@ -156,14 +156,14 @@ class Notification {
   +markAsRead(): Boolean
 }
 
-enum NotificationType {
+enum notificationType {
   EMAIL
   IN_APP
   PUSH
 }
 
 ' --- Paiements ---
-class Payment {
+class payment {
   -id: UUID
   -bookingId: UUID
   -amount: Decimal
@@ -177,7 +177,7 @@ class Payment {
   +getReceipt(): String
 }
 
-enum PaymentStatus {
+enum paymentStatus {
   PENDING
   COMPLETED
   FAILED
@@ -185,40 +185,37 @@ enum PaymentStatus {
 }
 
 ' --- Relations ---
-User ||--o{ Booking : makes
-User ||--o{ Review : writes
-User ||--o{ Notification : receives
-User }|--|| UserRole : has
+user ||--o{ booking : makes
+user ||--o{ review : writes
+user ||--o{ notification : receives
+user }|--|| userRole : has
 
-Event ||--o{ TicketType : contains
-Event ||--o{ Booking : has
-Event ||--o{ Review : receives
-Event }|--|| EventStatus : has
-Event }o--|| Venue : located at
-Event }o--|| Category : belongs to
+event ||--o{ ticketType : contains
+event ||--o{ booking : has
+event ||--o{ review : receives
+event }|--|| eventStatus : has
+event }o--|| venue : located at
+event }o--|| category : belongs to
 
-Venue ||--o{ Event : hosts
+venue ||--o{ event : hosts
 
-TicketType ||--o{ Ticket : generates
-TicketType }|--|| Event : belongs to
+ticketType ||--o{ ticket : generates
 
-Booking ||--o{ Ticket : includes
-Booking ||--|| Payment : requires
-Booking }|--|| BookingStatus : has
-Booking }|--|| Event : for
-Booking }|--|| User : by
+booking ||--o{ ticket : includes
+booking ||--|| payment : requires
+booking }|--|| bookingStatus : has
 
-Ticket }|--|| TicketType : type of
-Ticket }|--|| Booking : part of
+ticket }|--|| ticketType : type of
+ticket }|--|| booking : part of
 
-Review }|--|| Event : about
-Review }|--|| User : by
+review }|--|| event : about
+review }|--|| user : by
 
-Notification }|--|| User : for
-Notification }|--|| NotificationType : type
+notification }|--|| user : for
+notification }|--|| notificationType : type
 
-Payment }|--|| Booking : for
-Payment }|--|| PaymentStatus : has
+payment }|--|| booking : for
+payment }|--|| paymentStatus : has
 
 @enduml
 ```
