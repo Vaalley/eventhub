@@ -1,6 +1,8 @@
 # 🚀 Stratégie Agile - Projet EventHub
 **Méthodologie hybride : Scrumban (Cadre Scrum + visualisation Kanban)**
 
+Lien de la [presentation](https://docs.google.com/presentation/d/1YFC3WpmUD-V7fg7ucxX-pIa1gPoGKH3E8NrA17_j7kE/edit?usp=sharing)
+
 ## 1. Définition du MVP (Minimum Viable Product)
 
 Le MVP se concentre sur la chaîne de valeur principale : **"Un organisateur publie un événement, un participant réserve sa place."**
@@ -102,6 +104,14 @@ Nous utilisons un tableau Kanban pour visualiser le flux continu au sein du Spri
 3.  **In Progress** (En cours de développement).
 4.  **Review / Test** (Pull Request, Code Review, Test fonctionnel).
 5.  **Done** (Validé et mergé sur la branche `main` / `develop`).
+
+### 📋 Tableau Kanban - Sprint 1 (exemple)
+**Objectif :** Socle technique opérationnel & API Auth prête.
+
+| 📝 À FAIRE (3 pts) | 🚧 EN COURS (5 pts) | 👀 REVUE (2 pts) | ✅ TERMINÉ (3 pts) |
+| :--- | :--- | :--- | :--- |
+| **[FRONT] EH-4**<br>Architecture React + Router + Tailwind<br>*(Dev Front)* | **[BACK] EH-3**<br>API Auth (Register/Login) + JWT<br>*(Dev Back)* | **[TECH] EH-2**<br>Script Création BDD (SQL) & Seed<br>*(Tech Lead)* | **[TECH] EH-1**<br>Init Repo Git & Docker Compose<br>*(Tech Lead)* |
+||**US-1**<br>Socle technique opérationnel & API Auth<br>|||
 
 ---
 
