@@ -51,7 +51,8 @@ services:
   # Frontend (Production with Nginx)
   frontend:
     build:
-      context: ./front
+      context: .
+      dockerfile: front/Dockerfile
       target: production
     container_name: eventhub-frontend-prod
     ports:

@@ -5,17 +5,15 @@ EventHub is a web platform for event management and ticketing. It enables organi
 ## Architecture
 
 - **Frontend**: React + TypeScript + Vite (port 5173)
-- **Backend**: Node.js + Express (port 3000)
+- **Backend**: Bun + Express (port 3000)
 - **Database**: MongoDB (port 27017)
 - **Cache**: Redis (port 6379)
 - **Reverse Proxy**: Nginx (port 80)
 
-## Getting Started with Docker
+## Local Development (with Docker)
 
 ### Prerequisites
 - Docker Desktop installed and running
-
-## Development Mode
 
 ### Start All Services
 ```bash
@@ -44,10 +42,12 @@ docker-compose logs -f backend
 ### Access the Application (Development)
 
 - **Frontend**: http://localhost:5173 (Vite dev server with HMR)
-- **Backend API**: http://localhost:3000 (Nodemon with hot reload)
+- **Backend API**: http://localhost:3000 (Bun with hot reload)
 - **Nginx Proxy**: http://localhost (frontend) AND http://localhost/api (backend)
 
-## Production Mode
+---
+
+## Docker Production
 
 ### Build and Start Production Services
 ```bash
@@ -62,8 +62,10 @@ docker-compose -f docker-compose.prod.yml down
 ### Access the Application (Production)
 
 - **Frontend**: http://localhost:8080 (Nginx serving static files)
-- **Backend API**: http://localhost:3000 (Node.js production mode)
+- **Backend API**: http://localhost:3000 (Bun production mode)
 - **Nginx Proxy**: http://localhost
+
+---
 
 ## Diagrams
 

@@ -1,53 +1,59 @@
 # Stage 1: Dependencies
-FROM node:22-alpine AS dependencies
+FROM oven/bun:1.3-alpine AS dependencies
 
 WORKDIR /app
 
-# Copy package files
-COPY package*.json ./
+# Copy package files from front directory
+COPY front/package.json front/bun.lock* ./
 
 # Install dependencies
-RUN npm ci
+RUN bun install --frozen-lockfile
 
 # Stage 2: Development
-FROM node:22-alpine AS development
+FROM oven/bun:1.3-alpine AS development
 
 WORKDIR /app
 
 # Copy package files
-COPY package*.json ./
+COPY front/package.json front/bun.lock* ./
 
 # Copy dependencies from previous stage
 COPY --from=dependencies /app/node_modules ./node_modules
 
+# Copy tsconfig.base.json to parent directory (simulates monorepo structure)
+COPY tsconfig.base.json /tsconfig.base.json
+
 # Copy application source
-COPY . .
+COPY front/ .
 
 # Expose the Vite dev server port
 EXPOSE 5173
 
 # Run the development server
-CMD ["npm", "run", "dev", "--", "--host"]
+CMD ["bun", "run", "dev", "--host"]
 
 # Stage 3: Build for production
-FROM node:22-alpine AS builder
+FROM oven/bun:1.3-alpine AS builder
 
 WORKDIR /app
 
 # Copy package files
-COPY package*.json ./
+COPY front/package.json front/bun.lock* ./
 
 # Copy dependencies
 COPY --from=dependencies /app/node_modules ./node_modules
 
+# Copy tsconfig.base.json to parent directory
+COPY tsconfig.base.json /tsconfig.base.json
+
 # Copy application source
-COPY . .
+COPY front/ .
 
 # Build the application
-RUN npm run build
+RUN bun run build
 
 # Stage 4: Production with nginx
-FROM nginx:1.29.2-alpine AS production
+FROM nginx:1.27-alpine AS production
 
 # Copy built files from builder stage
 COPY --from=builder /app/dist /usr/share/nginx/html
