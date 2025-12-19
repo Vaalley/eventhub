@@ -1,11 +1,13 @@
-import './App.css'
+import { AppWrapper } from './modules/app/components/AppWrapper'
 import { Layout } from './modules/app/components/Layout'
 
 function App() {
 	return (
-		<Layout>
-			<div>Content goes here</div>
-		</Layout>
+		<AppWrapper>
+			<Layout>
+				<div>Content goes here</div>
+			</Layout>
+		</AppWrapper>
 	)
 }
 
