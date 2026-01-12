@@ -3,3 +3,11 @@ node_modules
 .gitignore
 *.md
 .env
+.nx
+dist
+training
+back/node_modules
+front/node_modules
+mongo
+redis
+nginx

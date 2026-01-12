@@ -1,0 +1,21 @@
+{
+	"name": "eventhub",
+	"version": "1.0.0",
+	"private": true,
+	"workspaces": ["back", "front"],
+	"scripts": {
+		"dev:front": "nx run eventhub-frontend:dev",
+		"dev:back": "nx run eventhub-backend:dev",
+		"dev": "nx run-many -t dev",
+		"build": "nx run-many -t build",
+		"lint": "biome check .",
+		"lint:fix": "biome check --write .",
+		"format": "biome format --write .",
+		"tidy": "biome check --write",
+		"graph": "nx graph"
+	},
+	"devDependencies": {
+		"@biomejs/biome": "^1.9.4",
+		"nx": "22.2.7"
+	}
+}

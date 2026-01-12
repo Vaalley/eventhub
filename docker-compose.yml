@@ -52,7 +52,8 @@ services:
   # Frontend
   frontend:
     build:
-      context: ./front
+      context: .
+      dockerfile: front/Dockerfile
       target: development
     container_name: eventhub-frontend
     ports:
@@ -60,6 +61,7 @@ services:
     volumes:
       - ./front:/app
       - /app/node_modules
+      - ./tsconfig.base.json:/tsconfig.base.json:ro
     environment:
       - NODE_ENV=development
       - VITE_API_URL=http://localhost/api

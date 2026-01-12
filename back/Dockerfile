@@ -1,32 +1,32 @@
 # Stage 1: Dependencies
-FROM node:22-alpine AS dependencies
+FROM oven/bun:1.3-alpine AS dependencies
 
 WORKDIR /app
 
 # Copy package files
-COPY package*.json ./
+COPY package.json bun.lock* ./
 
 # Install all dependencies
-RUN npm ci
+RUN bun install --frozen-lockfile
 
 # Stage 2: Production Dependencies
-FROM node:22-alpine AS prod-dependencies
+FROM oven/bun:1.3-alpine AS prod-dependencies
 
 WORKDIR /app
 
 # Copy package files
-COPY package*.json ./
+COPY package.json bun.lock* ./
 
 # Install only production dependencies
-RUN npm ci --omit=dev
+RUN bun install --frozen-lockfile --production
 
 # Stage 3: Development
-FROM node:22-alpine AS development
+FROM oven/bun:1.3-alpine AS development
 
 WORKDIR /app
 
 # Copy package files
-COPY package*.json ./
+COPY package.json bun.lock* ./
 
 # Copy dependencies from dependencies stage
 COPY --from=dependencies /app/node_modules ./node_modules
@@ -37,32 +37,32 @@ COPY . .
 # Expose the application port
 EXPOSE 3000
 
-# Run the application with nodemon
-CMD ["npm", "run", "dev"]
+# Run the application with bun --watch
+CMD ["bun", "run", "dev"]
 
 # Stage 4: Production
-FROM node:22-alpine AS production
+FROM oven/bun:1.3-alpine AS production
 
 WORKDIR /app
 
 # Create non-root user
-RUN addgroup -g 1001 -S nodejs && \
-    adduser -S nodejs -u 1001
+RUN addgroup -g 1001 -S bun && \
+    adduser -S bun -u 1001
 
 # Copy package files
-COPY package*.json ./
+COPY package.json bun.lock* ./
 
 # Copy production dependencies
 COPY --from=prod-dependencies /app/node_modules ./node_modules
 
 # Copy application source
-COPY --chown=nodejs:nodejs . .
+COPY --chown=bun:bun . .
 
 # Switch to non-root user
-USER nodejs
+USER bun
 
 # Expose the application port
 EXPOSE 3000
 
 # Run the application
-CMD ["node", "main.js"]
+CMD ["bun", "run", "main.js"]
