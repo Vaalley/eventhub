@@ -1,7 +1,10 @@
-import { describe, it, expect, beforeEach } from 'bun:test'
-import { CreateEventUseCase, type CreateEventDTO } from '../../application/usecases/CreateEventUseCase'
-import { InMemoryEventRepository } from '../../infrastructure/repositories/InMemoryEventRepository'
+import { beforeEach, describe, expect, it } from 'bun:test'
+import {
+	type CreateEventDTO,
+	CreateEventUseCase,
+} from '../../application/usecases/CreateEventUseCase'
 import { ValidationError } from '../../domain'
+import { InMemoryEventRepository } from '../../infrastructure/repositories/InMemoryEventRepository'
 
 describe('CreateEventUseCase', () => {
 	let useCase: CreateEventUseCase
@@ -108,7 +111,9 @@ describe('CreateEventUseCase', () => {
 		}
 
 		expect(useCase.execute(dto)).rejects.toThrow(ValidationError)
-		expect(useCase.execute(dto)).rejects.toThrow('La date de fin doit être après la date de début')
+		expect(useCase.execute(dto)).rejects.toThrow(
+			'La date de fin doit être après la date de début',
+		)
 	})
 
 	it("devrait sauvegarder l'événement dans le repository", async () => {

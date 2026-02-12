@@ -25,23 +25,35 @@ FROM oven/bun:1.3-debian AS development
 
 WORKDIR /app
 
+# Install netcat for database connection check
+RUN apt-get update && apt-get install -y netcat-openbsd && rm -rf /var/lib/apt/lists/*
+
 # Copy package files
 COPY package.json bun.lock* ./
 
 # Install dependencies
 RUN bun install --frozen-lockfile
 
-# Copy application source
-COPY . .
+# Copy prisma schema first for generation
+COPY prisma ./prisma/
 
 # Generate Prisma client
 RUN bunx prisma generate
 
+# Copy application source
+COPY . .
+
+# Copy start script
+COPY start.sh .
+
+# Make start script executable
+RUN chmod +x /app/start.sh
+
 # Expose the application port
 EXPOSE 3000
 
-# Run the application with bun --watch
-CMD ["bun", "run", "dev"]
+# Run the startup script
+CMD ["/app/start.sh"]
 
 # Stage 4: Production
 FROM oven/bun:1.3-alpine AS production

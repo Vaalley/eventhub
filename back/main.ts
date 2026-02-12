@@ -1,16 +1,16 @@
-import express from 'express'
 import cors from 'cors'
+import express from 'express'
 import swaggerUi from 'swagger-ui-express'
+import { EventController, createEventRoutes, swaggerSpec } from './src/api'
+import { errorHandler } from './src/api/middlewares/errorHandler'
 import {
 	CreateEventUseCase,
+	DeleteEventUseCase,
 	GetEventUseCase,
 	ListEventsUseCase,
 	UpdateEventUseCase,
-	DeleteEventUseCase,
 } from './src/application'
-import { EventController, createEventRoutes, swaggerSpec } from './src/api'
-import { errorHandler } from './src/api/middlewares/errorHandler'
-import { PrismaEventRepository, prisma, connectDatabase } from './src/infrastructure'
+import { PrismaEventRepository, connectDatabase, prisma } from './src/infrastructure'
 
 const app = express()
 const port = process.env.PORT || 3000
@@ -34,7 +34,7 @@ const eventController = new EventController(
 	getEventUseCase,
 	listEventsUseCase,
 	updateEventUseCase,
-	deleteEventUseCase
+	deleteEventUseCase,
 )
 
 // Routes

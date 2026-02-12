@@ -1,10 +1,10 @@
-import type { Request, Response, NextFunction } from 'express'
+import type { NextFunction, Request, Response } from 'express'
 import type {
 	CreateEventUseCase,
+	DeleteEventUseCase,
 	GetEventUseCase,
 	ListEventsUseCase,
 	UpdateEventUseCase,
-	DeleteEventUseCase,
 } from '../../application'
 
 export class EventController {
@@ -13,7 +13,7 @@ export class EventController {
 		private readonly getEventUseCase: GetEventUseCase,
 		private readonly listEventsUseCase: ListEventsUseCase,
 		private readonly updateEventUseCase: UpdateEventUseCase,
-		private readonly deleteEventUseCase: DeleteEventUseCase
+		private readonly deleteEventUseCase: DeleteEventUseCase,
 	) {}
 
 	async create(req: Request, res: Response, next: NextFunction): Promise<void> {

@@ -1,7 +1,12 @@
-import type { Request, Response, NextFunction } from 'express'
-import { ValidationError, NotFoundError, DomainError } from '../../domain'
+import type { NextFunction, Request, Response } from 'express'
+import { DomainError, NotFoundError, ValidationError } from '../../domain'
 
-export function errorHandler(error: Error, _req: Request, res: Response, _next: NextFunction): void {
+export function errorHandler(
+	error: Error,
+	_req: Request,
+	res: Response,
+	_next: NextFunction,
+): void {
 	console.error(error)
 
 	if (error instanceof ValidationError) {

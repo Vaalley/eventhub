@@ -82,7 +82,7 @@ export class PrismaEventRepository implements EventRepository {
 					imageUrl: e.imageUrl ?? undefined,
 					createdAt: e.createdAt,
 					updatedAt: e.updatedAt,
-				})
+				}),
 		)
 	}
 
@@ -151,7 +151,7 @@ export class PrismaEventRepository implements EventRepository {
 					imageUrl: e.imageUrl ?? undefined,
 					createdAt: e.createdAt,
 					updatedAt: e.updatedAt,
-				})
+				}),
 		)
 	}
 
@@ -177,7 +177,7 @@ export class PrismaEventRepository implements EventRepository {
 					imageUrl: e.imageUrl ?? undefined,
 					createdAt: e.createdAt,
 					updatedAt: e.updatedAt,
-				})
+				}),
 		)
 	}
 }
