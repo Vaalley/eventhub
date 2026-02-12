@@ -1,5 +1,5 @@
 import type { NextFunction, Request, Response } from 'express'
-import { DomainError, NotFoundError, ValidationError } from '../../domain'
+import { DomainError, NotFoundError, UnauthorizedError, ValidationError } from '../../domain'
 
 export function errorHandler(
 	error: Error,
@@ -11,6 +11,11 @@ export function errorHandler(
 
 	if (error instanceof ValidationError) {
 		res.status(400).json({ error: error.message })
+		return
+	}
+
+	if (error instanceof UnauthorizedError) {
+		res.status(401).json({ error: error.message })
 		return
 	}
 

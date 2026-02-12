@@ -18,3 +18,10 @@ export class NotFoundError extends DomainError {
 		this.name = 'NotFoundError'
 	}
 }
+
+export class UnauthorizedError extends DomainError {
+	constructor(message: string) {
+		super(message)
+		this.name = 'UnauthorizedError'
+	}
+}

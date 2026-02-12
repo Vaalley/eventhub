@@ -1,4 +1,6 @@
 #!/bin/bash
+echo "Installing dependencies..."
+bun install
 echo "Waiting for database..."
 while ! nc -z postgres 5432; do
   sleep 1
@@ -9,4 +11,4 @@ bunx prisma generate
 echo "Pushing database schema..."
 bunx prisma db push --accept-data-loss
 echo "Starting application..."
-exec bun --watch main.js
+exec bun --watch main.ts
