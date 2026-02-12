@@ -12,6 +12,22 @@ services:
       - eventhub-network
     restart: unless-stopped
 
+  # PostgreSQL Database
+  postgres:
+    image: postgres:16-alpine
+    container_name: eventhub-postgres
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: eventhub
+      POSTGRES_PASSWORD: eventhub
+      POSTGRES_DB: eventhub
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - eventhub-network
+    restart: unless-stopped
+
   # Redis Cache
   redis:
     build:
@@ -35,15 +51,17 @@ services:
       - "3000:3000"
     volumes:
       - ./back:/app
-      - /app/node_modules
+      - backend_node_modules:/app/node_modules
     environment:
       - NODE_ENV=development
       - PORT=3000
       - MONGODB_URI=mongodb://mongodb:27017/eventhub
       - REDIS_HOST=redis
       - REDIS_PORT=6379
+      - DATABASE_URL=postgresql://eventhub:eventhub@postgres:5432/eventhub
     depends_on:
       - mongodb
+      - postgres
       - redis
     networks:
       - eventhub-network
@@ -91,4 +109,6 @@ networks:
 
 volumes:
   mongodb_data:
+  postgres_data:
   redis_data:
+  backend_node_modules:

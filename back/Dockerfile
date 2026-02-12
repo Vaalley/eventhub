@@ -21,18 +21,21 @@ COPY package.json bun.lock* ./
 RUN bun install --frozen-lockfile --production
 
 # Stage 3: Development
-FROM oven/bun:1.3-alpine AS development
+FROM oven/bun:1.3-debian AS development
 
 WORKDIR /app
 
 # Copy package files
 COPY package.json bun.lock* ./
 
-# Copy dependencies from dependencies stage
-COPY --from=dependencies /app/node_modules ./node_modules
+# Install dependencies
+RUN bun install --frozen-lockfile
 
 # Copy application source
 COPY . .
+
+# Generate Prisma client
+RUN bunx prisma generate
 
 # Expose the application port
 EXPOSE 3000
@@ -57,6 +60,9 @@ COPY --from=prod-dependencies /app/node_modules ./node_modules
 
 # Copy application source
 COPY --chown=bun:bun . .
+
+# Generate Prisma client
+RUN bunx prisma generate
 
 # Switch to non-root user
 USER bun
