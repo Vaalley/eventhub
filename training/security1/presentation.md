@@ -18,7 +18,7 @@ paginate: true
 
 - **EventHub** : plateforme de gestion d'événements et billetterie
 - **Stack** : Bun + Express + Prisma + PostgreSQL + React + Redux
-- **Objectif** : Ajouter la double authentification (2FA + recovery codes)
+- **Objectif** : Ajouter la double authentification (TOTP + recovery codes)
 - **Architecture** : Onion Architecture + SOLID
 
 ---
