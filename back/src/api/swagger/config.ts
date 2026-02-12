@@ -15,6 +15,13 @@ const options: swaggerJsdoc.Options = {
 			},
 		],
 		components: {
+			securitySchemes: {
+				bearerAuth: {
+					type: 'http',
+					scheme: 'bearer',
+					bearerFormat: 'JWT',
+				},
+			},
 			schemas: {
 				Event: {
 					type: 'object',
@@ -42,7 +49,10 @@ const options: swaggerJsdoc.Options = {
 					required: ['title', 'startDate', 'venue', 'capacity', 'category'],
 					properties: {
 						title: { type: 'string', example: 'Concert de Jazz' },
-						description: { type: 'string', example: 'Un super concert de jazz' },
+						description: {
+							type: 'string',
+							example: 'Un super concert de jazz',
+						},
 						startDate: {
 							type: 'string',
 							format: 'date-time',
@@ -61,7 +71,10 @@ const options: swaggerJsdoc.Options = {
 							enum: ['concert', 'conference', 'workshop', 'meetup', 'sport', 'other'],
 							example: 'concert',
 						},
-						imageUrl: { type: 'string', example: 'https://example.com/image.jpg' },
+						imageUrl: {
+							type: 'string',
+							example: 'https://example.com/image.jpg',
+						},
 					},
 				},
 				UpdateEventInput: {
