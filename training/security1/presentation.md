@@ -160,7 +160,7 @@ Un token partiel ne donne accès qu'à la vérification OTP.
 # 6. Conclusion
 
 - **Compétences** : TOTP, recovery codes, JWT partiel, intégration full-stack
-- **Difficultés** : API `otplib` v14 async, dépendances Bun en Docker
+- **Difficultés** : API `otplib`, dépendances Bun en Docker
 - **Améliorations** : Refresh tokens, tests unitaires auth
 
 ---
