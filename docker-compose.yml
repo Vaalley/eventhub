@@ -27,6 +27,11 @@ services:
     networks:
       - eventhub-network
     restart: unless-stopped
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U eventhub -d eventhub" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
   # Redis Cache
   redis:
@@ -59,10 +64,11 @@ services:
       - REDIS_HOST=redis
       - REDIS_PORT=6379
       - DATABASE_URL=postgresql://eventhub:eventhub@postgres:5432/eventhub
+      - JWT_SECRET=eventhub-jwt-secret-dev-only
+      - APP_NAME=EventHub
     depends_on:
-      - mongodb
-      - postgres
-      - redis
+      postgres:
+        condition: service_healthy
     networks:
       - eventhub-network
     restart: unless-stopped

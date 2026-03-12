@@ -15,6 +15,13 @@ const options: swaggerJsdoc.Options = {
 			},
 		],
 		components: {
+			securitySchemes: {
+				bearerAuth: {
+					type: 'http',
+					scheme: 'bearer',
+					bearerFormat: 'JWT',
+				},
+			},
 			schemas: {
 				Event: {
 					type: 'object',
@@ -28,7 +35,10 @@ const options: swaggerJsdoc.Options = {
 						capacity: { type: 'integer' },
 						price: { type: 'number' },
 						organizerId: { type: 'string' },
-						category: { type: 'string', enum: ['concert', 'conference', 'workshop', 'meetup', 'sport', 'other'] },
+						category: {
+							type: 'string',
+							enum: ['concert', 'conference', 'workshop', 'meetup', 'sport', 'other'],
+						},
 						imageUrl: { type: 'string' },
 						createdAt: { type: 'string', format: 'date-time' },
 						updatedAt: { type: 'string', format: 'date-time' },
@@ -39,14 +49,32 @@ const options: swaggerJsdoc.Options = {
 					required: ['title', 'startDate', 'venue', 'capacity', 'category'],
 					properties: {
 						title: { type: 'string', example: 'Concert de Jazz' },
-						description: { type: 'string', example: 'Un super concert de jazz' },
-						startDate: { type: 'string', format: 'date-time', example: '2025-02-01T20:00:00Z' },
-						endDate: { type: 'string', format: 'date-time', example: '2025-02-01T23:00:00Z' },
+						description: {
+							type: 'string',
+							example: 'Un super concert de jazz',
+						},
+						startDate: {
+							type: 'string',
+							format: 'date-time',
+							example: '2025-02-01T20:00:00Z',
+						},
+						endDate: {
+							type: 'string',
+							format: 'date-time',
+							example: '2025-02-01T23:00:00Z',
+						},
 						venue: { type: 'string', example: 'Salle Pleyel' },
 						capacity: { type: 'integer', example: 100 },
 						price: { type: 'number', example: 50 },
-						category: { type: 'string', enum: ['concert', 'conference', 'workshop', 'meetup', 'sport', 'other'], example: 'concert' },
-						imageUrl: { type: 'string', example: 'https://example.com/image.jpg' },
+						category: {
+							type: 'string',
+							enum: ['concert', 'conference', 'workshop', 'meetup', 'sport', 'other'],
+							example: 'concert',
+						},
+						imageUrl: {
+							type: 'string',
+							example: 'https://example.com/image.jpg',
+						},
 					},
 				},
 				UpdateEventInput: {
@@ -59,7 +87,10 @@ const options: swaggerJsdoc.Options = {
 						venue: { type: 'string' },
 						capacity: { type: 'integer' },
 						price: { type: 'number' },
-						category: { type: 'string', enum: ['concert', 'conference', 'workshop', 'meetup', 'sport', 'other'] },
+						category: {
+							type: 'string',
+							enum: ['concert', 'conference', 'workshop', 'meetup', 'sport', 'other'],
+						},
 						imageUrl: { type: 'string' },
 					},
 				},

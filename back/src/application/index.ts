@@ -1,5 +1,16 @@
-export { CreateEventUseCase, type CreateEventDTO } from './usecases/CreateEventUseCase'
+export {
+	type CreateEventDTO,
+	CreateEventUseCase,
+} from './usecases/CreateEventUseCase'
 export { GetEventUseCase } from './usecases/GetEventUseCase'
 export { ListEventsUseCase } from './usecases/ListEventsUseCase'
-export { UpdateEventUseCase, type UpdateEventInput } from './usecases/UpdateEventUseCase'
+export {
+	type UpdateEventInput,
+	UpdateEventUseCase,
+} from './usecases/UpdateEventUseCase'
 export { DeleteEventUseCase } from './usecases/DeleteEventUseCase'
+export { RegisterUseCase } from './usecases/RegisterUseCase'
+export { LoginUseCase } from './usecases/LoginUseCase'
+export { SetupOtpUseCase } from './usecases/SetupOtpUseCase'
+export { VerifyOtpUseCase } from './usecases/VerifyOtpUseCase'
+export { DisableOtpUseCase } from './usecases/DisableOtpUseCase'

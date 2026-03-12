@@ -16,9 +16,16 @@ export interface EventProps {
 	updatedAt?: Date
 }
 
-export const VALID_CATEGORIES = ['concert', 'conference', 'workshop', 'meetup', 'sport', 'other'] as const
+export const VALID_CATEGORIES = [
+	'concert',
+	'conference',
+	'workshop',
+	'meetup',
+	'sport',
+	'other',
+] as const
 
-export type ValidCategory = typeof VALID_CATEGORIES[number]
+export type ValidCategory = (typeof VALID_CATEGORIES)[number]
 
 export class Event {
 	private props: EventProps
@@ -54,7 +61,9 @@ export class Event {
 		}
 
 		if (!VALID_CATEGORIES.includes(props.category)) {
-			throw new ValidationError(`La catégorie doit être parmi: ${VALID_CATEGORIES.join(', ')}`)
+			throw new ValidationError(
+				`La catégorie doit être parmi: ${VALID_CATEGORIES.join(', ')}`,
+			)
 		}
 
 		if (!props.organizerId || props.organizerId.trim() === '') {

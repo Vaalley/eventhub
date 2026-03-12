@@ -1,10 +1,17 @@
 export { LoginPage } from './pages/LoginPage'
+export { OtpVerifyPage } from './pages/OtpVerifyPage'
 export { LoginForm } from './components/LoginForm'
 export { EmailField } from './components/EmailField'
 export { PasswordField } from './components/PasswordField'
 export { SubmitButton } from './components/SubmitButton'
 export { UserProfile } from './components/UserProfile'
+export { TwoFactorSetup } from './components/TwoFactorSetup'
 export { useLoginForm } from './hooks/useLoginForm'
 export { authActions, authReducer } from './slice'
-export { selectUser, selectIsAuthenticated } from './selectors'
-export type { User, AuthState, LoginCredentials } from './types'
+export {
+	selectIsAuthenticated,
+	selectRequireOtp,
+	selectToken,
+	selectUser,
+} from './selectors'
+export type { AuthState, LoginCredentials, User } from './types'

@@ -2,11 +2,14 @@ export interface User {
 	id: string
 	email: string
 	name: string
+	otpEnabled?: boolean
 }
 
 export interface AuthState {
 	user: User | null
+	token: string | null
 	isAuthenticated: boolean
+	requireOtp: boolean
 }
 
 export interface LoginCredentials {
