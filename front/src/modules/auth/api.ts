@@ -2,6 +2,7 @@ const API_BASE = '/api'
 
 async function request<T>(url: string, options?: RequestInit): Promise<T> {
 	const res = await fetch(`${API_BASE}${url}`, {
+		credentials: 'include',
 		headers: { 'Content-Type': 'application/json' },
 		...options,
 	})
@@ -10,13 +11,6 @@ async function request<T>(url: string, options?: RequestInit): Promise<T> {
 		throw new Error(data.error || 'Erreur serveur')
 	}
 	return data as T
-}
-
-function authHeaders(token: string): HeadersInit {
-	return {
-		'Content-Type': 'application/json',
-		Authorization: `Bearer ${token}`,
-	}
 }
 
 export const authApi = {
@@ -29,7 +23,6 @@ export const authApi = {
 
 	login(email: string, password: string) {
 		return request<{
-			token: string
 			requireOtp: boolean
 			user: {
 				id: string
@@ -43,25 +36,28 @@ export const authApi = {
 		})
 	},
 
-	setupOtp(token: string) {
+	setupOtp() {
 		return request<{ qrCodeDataUrl: string; secret: string }>('/auth/otp/setup', {
 			method: 'GET',
-			headers: authHeaders(token),
 		})
 	},
 
-	verifyOtp(token: string, code: string, isEnabling = false, isRecoveryCode = false) {
-		return request<{ token: string; recoveryCodes?: string[] }>('/auth/otp/verify', {
+	verifyOtp(code: string, isEnabling = false, isRecoveryCode = false) {
+		return request<{ recoveryCodes?: string[] }>('/auth/otp/verify', {
 			method: 'POST',
-			headers: authHeaders(token),
 			body: JSON.stringify({ code, isEnabling, isRecoveryCode }),
 		})
 	},
 
-	disableOtp(token: string) {
+	disableOtp() {
 		return request<{ message: string }>('/auth/otp', {
 			method: 'DELETE',
-			headers: authHeaders(token),
+		})
+	},
+
+	logout() {
+		return request<{ message: string }>('/auth/logout', {
+			method: 'POST',
 		})
 	},
 }

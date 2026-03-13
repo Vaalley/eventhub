@@ -1,10 +1,13 @@
+import cookieParser from 'cookie-parser'
 import cors from 'cors'
 import express from 'express'
 import swaggerUi from 'swagger-ui-express'
 import {
+	AnalyticsController,
 	AuthController,
 	EventController,
 	authMiddleware,
+	createAnalyticsRoutes,
 	createAuthRoutes,
 	createEventRoutes,
 	swaggerSpec,
@@ -15,18 +18,22 @@ import {
 	DeleteEventUseCase,
 	DisableOtpUseCase,
 	GetEventUseCase,
+	GetPageViewStatsUseCase,
 	ListEventsUseCase,
 	LoginUseCase,
 	RegisterUseCase,
 	SetupOtpUseCase,
+	TrackPageViewUseCase,
 	UpdateEventUseCase,
 	VerifyOtpUseCase,
 } from './src/application'
 import {
+	MongoPageViewRepository,
 	PrismaEventRepository,
 	PrismaRecoveryCodeRepository,
 	PrismaUserRepository,
 	connectDatabase,
+	connectMongoDB,
 	prisma,
 } from './src/infrastructure'
 
@@ -35,7 +42,13 @@ const port = process.env.PORT || 3000
 const jwtSecret = process.env.JWT_SECRET || 'eventhub-secret-change-me'
 const appName = process.env.APP_NAME || 'EventHub'
 
-app.use(cors())
+app.use(
+	cors({
+		origin: true,
+		credentials: true,
+	}),
+)
+app.use(cookieParser())
 app.use(express.json())
 
 // Swagger docs
@@ -81,6 +94,9 @@ const auth = authMiddleware(jwtSecret)
 app.use('/api/auth', createAuthRoutes(authController, auth))
 app.use('/api/events', createEventRoutes(eventController))
 
+// Analytics routes will be set up after MongoDB connects
+let analyticsController: AnalyticsController | null = null
+
 app.get('/', (_req, res) => {
 	res.json({ message: 'EventHub API', docs: '/api-docs' })
 })
@@ -92,6 +108,15 @@ app.use(errorHandler)
 async function start() {
 	try {
 		await connectDatabase()
+
+		// Connect MongoDB and setup analytics
+		const mongoDB = await connectMongoDB()
+		const pageViewRepository = new MongoPageViewRepository(mongoDB)
+		const trackPageViewUseCase = new TrackPageViewUseCase(pageViewRepository)
+		const getPageViewStatsUseCase = new GetPageViewStatsUseCase(pageViewRepository)
+		analyticsController = new AnalyticsController(trackPageViewUseCase, getPageViewStatsUseCase)
+		app.use('/api/analytics', createAnalyticsRoutes(analyticsController, auth))
+
 		app.listen(port, () => {
 			console.log(`Server running on http://localhost:${port}`)
 			console.log(`Swagger docs: http://localhost:${port}/api-docs`)

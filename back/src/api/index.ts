@@ -1,6 +1,8 @@
 export { EventController } from './controllers/EventController'
 export { AuthController } from './controllers/AuthController'
+export { AnalyticsController } from './controllers/AnalyticsController'
 export { createEventRoutes } from './routes/eventRoutes'
 export { createAuthRoutes } from './routes/authRoutes'
+export { createAnalyticsRoutes } from './routes/analyticsRoutes'
 export { authMiddleware } from './middlewares/authMiddleware'
 export { swaggerSpec } from './swagger/config'

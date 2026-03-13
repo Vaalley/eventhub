@@ -1,16 +1,14 @@
 import { Alert, Box, Button, TextField, Typography } from '@mui/material'
 import { useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
-import type { AppDispatch, AppState } from '../../store/store'
+import { useDispatch } from 'react-redux'
+import type { AppDispatch } from '../../store/store'
 import { authApi } from '../api'
-import { selectToken } from '../selectors'
 import { authActions } from '../slice'
 
 type Step = 'idle' | 'qr' | 'recovery'
 
 export const TwoFactorSetup: React.FC = () => {
 	const dispatch = useDispatch<AppDispatch>()
-	const token = useSelector((state: AppState) => selectToken(state))
 	const [step, setStep] = useState<Step>('idle')
 	const [qrCode, setQrCode] = useState('')
 	const [secret, setSecret] = useState('')
@@ -20,10 +18,9 @@ export const TwoFactorSetup: React.FC = () => {
 	const [loading, setLoading] = useState(false)
 
 	const handleSetup = async () => {
-		if (!token) return
 		setLoading(true)
 		try {
-			const result = await authApi.setupOtp(token)
+			const result = await authApi.setupOtp()
 			setQrCode(result.qrCodeDataUrl)
 			setSecret(result.secret)
 			setStep('qr')
@@ -35,13 +32,13 @@ export const TwoFactorSetup: React.FC = () => {
 	}
 
 	const handleVerify = async () => {
-		if (!token || !code.trim()) return
+		if (!code.trim()) return
 		setLoading(true)
 		setError('')
 		try {
-			const result = await authApi.verifyOtp(token, code.trim(), true)
+			const result = await authApi.verifyOtp(code.trim(), true)
 			if (result.recoveryCodes) setRecoveryCodes(result.recoveryCodes)
-			dispatch(authActions.otpVerified(result.token))
+			dispatch(authActions.otpEnabledChanged(true))
 			setStep('recovery')
 		} catch (err) {
 			setError(err instanceof Error ? err.message : 'Code invalide')

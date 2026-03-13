@@ -141,5 +141,17 @@ export function createAuthRoutes(
 		controller.disableOtp(req, res, next),
 	)
 
+	/**
+	 * @swagger
+	 * /api/auth/logout:
+	 *   post:
+	 *     summary: Déconnexion (supprime le cookie)
+	 *     tags: [Auth]
+	 *     responses:
+	 *       200:
+	 *         description: Déconnexion réussie
+	 */
+	router.post('/logout', (req, res) => controller.logout(req, res))
+
 	return router
 }

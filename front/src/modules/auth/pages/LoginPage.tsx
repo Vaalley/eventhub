@@ -28,7 +28,6 @@ export const LoginPage: React.FC<Props> = ({ onSwitchToRegister }) => {
 			dispatch(
 				authActions.loginSuccess({
 					user: result.user,
-					token: result.token,
 					requireOtp: result.requireOtp,
 				}),
 			)

@@ -8,7 +8,6 @@ function loadState(): AuthState {
 	} catch {}
 	return {
 		user: null,
-		token: null,
 		isAuthenticated: false,
 		requireOtp: false,
 	}
@@ -26,18 +25,13 @@ export const authSlice = createSlice({
 	name: 'auth',
 	initialState,
 	reducers: {
-		loginSuccess: (
-			state,
-			action: PayloadAction<{ user: User; token: string; requireOtp: boolean }>,
-		) => {
+		loginSuccess: (state, action: PayloadAction<{ user: User; requireOtp: boolean }>) => {
 			state.user = action.payload.user
-			state.token = action.payload.token
 			state.requireOtp = action.payload.requireOtp
 			state.isAuthenticated = !action.payload.requireOtp
 			saveState(state)
 		},
-		otpVerified: (state, action: PayloadAction<string>) => {
-			state.token = action.payload
+		otpVerified: (state) => {
 			state.requireOtp = false
 			state.isAuthenticated = true
 			saveState(state)
@@ -50,7 +44,6 @@ export const authSlice = createSlice({
 		},
 		logout: (state) => {
 			state.user = null
-			state.token = null
 			state.isAuthenticated = false
 			state.requireOtp = false
 			localStorage.removeItem('auth')

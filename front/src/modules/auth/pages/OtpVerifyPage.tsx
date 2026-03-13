@@ -1,26 +1,24 @@
 import { Alert, Box, Button, Paper, TextField, Typography } from '@mui/material'
 import { useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
-import type { AppDispatch, AppState } from '../../store/store'
+import { useDispatch } from 'react-redux'
+import type { AppDispatch } from '../../store/store'
 import { authApi } from '../api'
-import { selectToken } from '../selectors'
 import { authActions } from '../slice'
 
 export const OtpVerifyPage: React.FC = () => {
 	const dispatch = useDispatch<AppDispatch>()
-	const token = useSelector((state: AppState) => selectToken(state))
 	const [code, setCode] = useState('')
 	const [useRecovery, setUseRecovery] = useState(false)
 	const [error, setError] = useState('')
 	const [loading, setLoading] = useState(false)
 
 	const handleVerify = async () => {
-		if (!token || !code.trim()) return
+		if (!code.trim()) return
 		setLoading(true)
 		setError('')
 		try {
-			const result = await authApi.verifyOtp(token, code.trim(), false, useRecovery)
-			dispatch(authActions.otpVerified(result.token))
+			await authApi.verifyOtp(code.trim(), false, useRecovery)
+			dispatch(authActions.otpVerified())
 		} catch (err) {
 			setError(err instanceof Error ? err.message : 'Code invalide')
 		} finally {
