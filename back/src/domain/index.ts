@@ -5,7 +5,11 @@ export {
 	type ValidCategory,
 } from './entities/Event'
 export { User, type UserProps } from './entities/User'
-export type { EventRepositoryInterface as EventRepository } from './interfaces/EventRepositoryInterface'
+export type {
+	EventRepositoryInterface as EventRepository,
+	PaginatedResult,
+	PaginationParams,
+} from './interfaces/EventRepositoryInterface'
 export type { UserRepositoryInterface } from './interfaces/UserRepositoryInterface'
 export type {
 	RecoveryCodeData,

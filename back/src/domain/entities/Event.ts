@@ -14,6 +14,7 @@ export interface EventProps {
 	imageUrl?: string
 	createdAt?: Date
 	updatedAt?: Date
+	skipDateValidation?: boolean
 }
 
 export const VALID_CATEGORIES = [
@@ -48,7 +49,7 @@ export class Event {
 			throw new ValidationError('La date de début est obligatoire')
 		}
 
-		if (new Date(props.startDate) <= new Date()) {
+		if (!props.skipDateValidation && new Date(props.startDate) <= new Date()) {
 			throw new ValidationError('La date de début doit être dans le futur')
 		}
 
@@ -117,5 +118,23 @@ export class Event {
 	}
 	get updatedAt(): Date | undefined {
 		return this.props.updatedAt
+	}
+
+	toJSON() {
+		return {
+			id: this.id,
+			title: this.title,
+			description: this.description,
+			startDate: this.startDate,
+			endDate: this.endDate,
+			venue: this.venue,
+			capacity: this.capacity,
+			price: this.price,
+			organizerId: this.organizerId,
+			category: this.category,
+			imageUrl: this.imageUrl,
+			createdAt: this.createdAt,
+			updatedAt: this.updatedAt,
+		}
 	}
 }

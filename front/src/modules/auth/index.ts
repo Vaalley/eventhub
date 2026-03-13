@@ -11,7 +11,6 @@ export { authActions, authReducer } from './slice'
 export {
 	selectIsAuthenticated,
 	selectRequireOtp,
-	selectToken,
 	selectUser,
 } from './selectors'
 export type { AuthState, LoginCredentials, User } from './types'

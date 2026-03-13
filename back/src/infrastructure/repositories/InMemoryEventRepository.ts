@@ -1,4 +1,9 @@
-import { Event, type EventRepository } from '../../domain'
+import {
+	Event,
+	type EventRepository,
+	type PaginatedResult,
+	type PaginationParams,
+} from '../../domain'
 
 export class InMemoryEventRepository implements EventRepository {
 	private events: Map<string, Event> = new Map()
@@ -32,6 +37,22 @@ export class InMemoryEventRepository implements EventRepository {
 
 	async findAll(): Promise<Event[]> {
 		return Array.from(this.events.values())
+	}
+
+	async findAllPaginated(params: PaginationParams): Promise<PaginatedResult<Event>> {
+		const page = params.page ?? 1
+		const limit = params.limit ?? 10
+		const all = Array.from(this.events.values())
+		const start = (page - 1) * limit
+		const data = all.slice(start, start + limit)
+
+		return {
+			data,
+			total: all.length,
+			page,
+			limit,
+			totalPages: Math.ceil(all.length / limit),
+		}
 	}
 
 	async update(id: string, data: Partial<Event>): Promise<Event | null> {

@@ -16,13 +16,11 @@ declare global {
 
 export function authMiddleware(jwtSecret: string) {
 	return (req: Request, res: Response, next: NextFunction): void => {
-		const authHeader = req.headers.authorization
-		if (!authHeader || !authHeader.startsWith('Bearer ')) {
+		const token = req.cookies?.token
+		if (!token) {
 			res.status(401).json({ error: 'Token manquant' })
 			return
 		}
-
-		const token = authHeader.split(' ')[1]
 
 		try {
 			const payload = jwt.verify(token, jwtSecret) as AuthPayload

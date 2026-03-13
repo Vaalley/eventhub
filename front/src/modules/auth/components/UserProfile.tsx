@@ -1,28 +1,29 @@
 import { Alert, Box, Button, Chip, Divider, Paper, Typography } from '@mui/material'
 import { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
+import { usePageTracking } from '../../dashboard'
 import type { AppDispatch, AppState } from '../../store/store'
 import { authApi } from '../api'
-import { selectToken, selectUser } from '../selectors'
+import { selectUser } from '../selectors'
 import { authActions } from '../slice'
 import { TwoFactorSetup } from './TwoFactorSetup'
 
 export const UserProfile: React.FC = () => {
+	usePageTracking('/profile')
 	const dispatch = useDispatch<AppDispatch>()
 	const user = useSelector((state: AppState) => selectUser(state))
-	const token = useSelector((state: AppState) => selectToken(state))
 	const [disableLoading, setDisableLoading] = useState(false)
 	const [message, setMessage] = useState('')
 
-	const handleLogout = () => {
+	const handleLogout = async () => {
+		await authApi.logout()
 		dispatch(authActions.logout())
 	}
 
 	const handleDisable2FA = async () => {
-		if (!token) return
 		setDisableLoading(true)
 		try {
-			await authApi.disableOtp(token)
+			await authApi.disableOtp()
 			dispatch(authActions.otpEnabledChanged(false))
 			setMessage('Two-factor authentication disabled')
 		} catch (err) {

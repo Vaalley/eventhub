@@ -29,7 +29,18 @@ export class AuthController {
 
 	async login(req: Request, res: Response, next: NextFunction): Promise<void> {
 		try {
-			res.json(await this.loginUseCase.execute(req.body))
+			const result = await this.loginUseCase.execute(req.body)
+			const maxAge = result.requireOtp ? 5 * 60 * 1000 : 24 * 60 * 60 * 1000
+			res.cookie('token', result.token, {
+				httpOnly: true,
+				secure: process.env.NODE_ENV === 'production',
+				sameSite: 'strict',
+				maxAge,
+			})
+			res.json({
+				requireOtp: result.requireOtp,
+				user: result.user,
+			})
 		} catch (error) {
 			next(error)
 		}
@@ -46,14 +57,19 @@ export class AuthController {
 	async verifyOtp(req: Request, res: Response, next: NextFunction): Promise<void> {
 		try {
 			const { code, isEnabling, isRecoveryCode } = req.body
-			res.json(
-				await this.verifyOtpUseCase.execute({
-					userId: req.user!.userId,
-					code,
-					isEnabling,
-					isRecoveryCode,
-				}),
-			)
+			const result = await this.verifyOtpUseCase.execute({
+				userId: req.user!.userId,
+				code,
+				isEnabling,
+				isRecoveryCode,
+			})
+			res.cookie('token', result.token, {
+				httpOnly: true,
+				secure: process.env.NODE_ENV === 'production',
+				sameSite: 'strict',
+				maxAge: 24 * 60 * 60 * 1000,
+			})
+			res.json({ recoveryCodes: result.recoveryCodes })
 		} catch (error) {
 			next(error)
 		}
@@ -66,5 +82,14 @@ export class AuthController {
 		} catch (error) {
 			next(error)
 		}
+	}
+
+	async logout(_req: Request, res: Response): Promise<void> {
+		res.clearCookie('token', {
+			httpOnly: true,
+			secure: process.env.NODE_ENV === 'production',
+			sameSite: 'strict',
+		})
+		res.json({ message: 'Déconnexion réussie' })
 	}
 }

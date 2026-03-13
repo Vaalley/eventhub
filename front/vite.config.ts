@@ -14,5 +14,11 @@ export default defineConfig({
 		hmr: {
 			clientPort: 5173,
 		},
+		proxy: {
+			'/api': {
+				target: 'http://backend:3000',
+				changeOrigin: true,
+			},
+		},
 	},
 })

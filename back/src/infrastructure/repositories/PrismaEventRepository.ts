@@ -1,5 +1,11 @@
 import type { PrismaClient } from '@prisma/client'
-import { Event, type EventRepository, type ValidCategory } from '../../domain'
+import {
+	Event,
+	type EventRepository,
+	type PaginatedResult,
+	type PaginationParams,
+	type ValidCategory,
+} from '../../domain'
 
 export class PrismaEventRepository implements EventRepository {
 	constructor(private readonly prisma: PrismaClient) {}
@@ -58,6 +64,7 @@ export class PrismaEventRepository implements EventRepository {
 			imageUrl: event.imageUrl ?? undefined,
 			createdAt: event.createdAt,
 			updatedAt: event.updatedAt,
+			skipDateValidation: true,
 		})
 	}
 
@@ -82,8 +89,50 @@ export class PrismaEventRepository implements EventRepository {
 					imageUrl: e.imageUrl ?? undefined,
 					createdAt: e.createdAt,
 					updatedAt: e.updatedAt,
+					skipDateValidation: true,
 				}),
 		)
+	}
+
+	async findAllPaginated(params: PaginationParams): Promise<PaginatedResult<Event>> {
+		const page = params.page ?? 1
+		const limit = params.limit ?? 10
+		const skip = (page - 1) * limit
+
+		const [events, total] = await Promise.all([
+			this.prisma.event.findMany({
+				orderBy: { startDate: 'asc' },
+				skip,
+				take: limit,
+			}),
+			this.prisma.event.count(),
+		])
+
+		return {
+			data: events.map(
+				(e) =>
+					new Event({
+						id: e.id,
+						title: e.title,
+						description: e.description ?? undefined,
+						startDate: e.startDate,
+						endDate: e.endDate ?? undefined,
+						venue: e.venue,
+						capacity: e.capacity,
+						price: e.price ?? undefined,
+						organizerId: e.organizerId,
+						category: e.category as ValidCategory,
+						imageUrl: e.imageUrl ?? undefined,
+						createdAt: e.createdAt,
+						updatedAt: e.updatedAt,
+						skipDateValidation: true,
+					}),
+			),
+			total,
+			page,
+			limit,
+			totalPages: Math.ceil(total / limit),
+		}
 	}
 
 	async update(id: string, data: Partial<Event>): Promise<Event | null> {
@@ -117,6 +166,7 @@ export class PrismaEventRepository implements EventRepository {
 				imageUrl: updated.imageUrl ?? undefined,
 				createdAt: updated.createdAt,
 				updatedAt: updated.updatedAt,
+				skipDateValidation: true,
 			})
 		} catch {
 			return null
@@ -151,6 +201,7 @@ export class PrismaEventRepository implements EventRepository {
 					imageUrl: e.imageUrl ?? undefined,
 					createdAt: e.createdAt,
 					updatedAt: e.updatedAt,
+					skipDateValidation: true,
 				}),
 		)
 	}
@@ -177,6 +228,7 @@ export class PrismaEventRepository implements EventRepository {
 					imageUrl: e.imageUrl ?? undefined,
 					createdAt: e.createdAt,
 					updatedAt: e.updatedAt,
+					skipDateValidation: true,
 				}),
 		)
 	}

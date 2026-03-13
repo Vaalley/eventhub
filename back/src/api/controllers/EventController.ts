@@ -43,10 +43,23 @@ export class EventController {
 		}
 	}
 
-	async list(_req: Request, res: Response, next: NextFunction): Promise<void> {
+	async list(req: Request, res: Response, next: NextFunction): Promise<void> {
 		try {
-			const events = await this.listEventsUseCase.execute()
-			res.json(events)
+			const page = req.query.page ? Number.parseInt(req.query.page as string, 10) : undefined
+			const limit = req.query.limit
+				? Number.parseInt(req.query.limit as string, 10)
+				: undefined
+
+			if (page || limit) {
+				const result = await this.listEventsUseCase.executePaginated({
+					page,
+					limit,
+				})
+				res.json(result)
+			} else {
+				const events = await this.listEventsUseCase.execute()
+				res.json(events)
+			}
 		} catch (error) {
 			next(error)
 		}

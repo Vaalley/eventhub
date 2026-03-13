@@ -1,9 +1,23 @@
 import type { Event } from '../entities/Event'
 
+export interface PaginationParams {
+	page?: number
+	limit?: number
+}
+
+export interface PaginatedResult<T> {
+	data: T[]
+	total: number
+	page: number
+	limit: number
+	totalPages: number
+}
+
 export interface EventRepositoryInterface {
 	save(event: Event): Promise<Event>
 	findById(id: string): Promise<Event | null>
 	findAll(): Promise<Event[]>
+	findAllPaginated(params: PaginationParams): Promise<PaginatedResult<Event>>
 	update(id: string, data: Partial<Event>): Promise<Event | null>
 	delete(id: string): Promise<void>
 	findByOrganizerId(organizerId: string): Promise<Event[]>
