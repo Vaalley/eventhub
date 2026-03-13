@@ -1,5 +1,16 @@
 import { Box, Card, CardContent, CircularProgress, Paper, Typography } from '@mui/material'
 import { useEffect, useState } from 'react'
+import {
+	Bar,
+	BarChart,
+	CartesianGrid,
+	Line,
+	LineChart,
+	ResponsiveContainer,
+	Tooltip,
+	XAxis,
+	YAxis,
+} from 'recharts'
 import { type PageViewStats, analyticsApi } from '../api'
 import { usePageTracking } from '../hooks/usePageTracking'
 
@@ -71,54 +82,44 @@ export const DashboardPage: React.FC = () => {
 			<Typography variant="h6" gutterBottom>
 				Top Pages
 			</Typography>
-			<Paper sx={{ mb: 4 }}>
-				{stats.viewsByPath.map((item) => (
-					<Box
-						key={item.path}
-						sx={{
-							display: 'flex',
-							justifyContent: 'space-between',
-							p: 2,
-							borderBottom: '1px solid',
-							borderColor: 'divider',
-							'&:last-child': { borderBottom: 0 },
-						}}
-					>
-						<Typography fontFamily="monospace">{item.path}</Typography>
-						<Typography fontWeight="bold">{item.count}</Typography>
-					</Box>
-				))}
-				{stats.viewsByPath.length === 0 && (
-					<Box sx={{ p: 2 }}>
-						<Typography color="text.secondary">No data yet</Typography>
-					</Box>
+			<Paper sx={{ mb: 4, p: 2 }}>
+				{stats.viewsByPath.length > 0 ? (
+					<ResponsiveContainer width="100%" height={300}>
+						<BarChart data={stats.viewsByPath} layout="vertical">
+							<CartesianGrid strokeDasharray="3 3" />
+							<XAxis type="number" />
+							<YAxis dataKey="path" type="category" width={120} fontSize={12} />
+							<Tooltip />
+							<Bar dataKey="count" fill="#1976d2" radius={[0, 4, 4, 0]} />
+						</BarChart>
+					</ResponsiveContainer>
+				) : (
+					<Typography color="text.secondary">No data yet</Typography>
 				)}
 			</Paper>
 
 			<Typography variant="h6" gutterBottom>
 				Views by Day
 			</Typography>
-			<Paper>
-				{stats.viewsByDay.map((item) => (
-					<Box
-						key={item.date}
-						sx={{
-							display: 'flex',
-							justifyContent: 'space-between',
-							p: 2,
-							borderBottom: '1px solid',
-							borderColor: 'divider',
-							'&:last-child': { borderBottom: 0 },
-						}}
-					>
-						<Typography>{item.date}</Typography>
-						<Typography fontWeight="bold">{item.count}</Typography>
-					</Box>
-				))}
-				{stats.viewsByDay.length === 0 && (
-					<Box sx={{ p: 2 }}>
-						<Typography color="text.secondary">No data yet</Typography>
-					</Box>
+			<Paper sx={{ p: 2 }}>
+				{stats.viewsByDay.length > 0 ? (
+					<ResponsiveContainer width="100%" height={300}>
+						<LineChart data={stats.viewsByDay}>
+							<CartesianGrid strokeDasharray="3 3" />
+							<XAxis dataKey="date" fontSize={12} />
+							<YAxis fontSize={12} />
+							<Tooltip />
+							<Line
+								type="monotone"
+								dataKey="count"
+								stroke="#1976d2"
+								strokeWidth={2}
+								dot={{ fill: '#1976d2' }}
+							/>
+						</LineChart>
+					</ResponsiveContainer>
+				) : (
+					<Typography color="text.secondary">No data yet</Typography>
 				)}
 			</Paper>
 		</Box>
