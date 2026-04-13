@@ -25,8 +25,8 @@ FROM oven/bun:1.3-debian AS development
 
 WORKDIR /app
 
-# Install netcat for database connection check
-RUN apt-get update && apt-get install -y netcat-openbsd && rm -rf /var/lib/apt/lists/*
+# Install netcat for database connection check and wget for healthcheck
+RUN apt-get update && apt-get install -y netcat-openbsd wget && rm -rf /var/lib/apt/lists/*
 
 # Copy package files
 COPY package.json bun.lock* ./
@@ -59,6 +59,9 @@ CMD ["/app/start.sh"]
 FROM oven/bun:1.3-alpine AS production
 
 WORKDIR /app
+
+# Install wget for healthcheck
+RUN apk add --no-cache wget
 
 # Create non-root user
 RUN addgroup -g 1001 -S bun && \
