@@ -21,7 +21,11 @@ import {
 	UpdateEventUseCase,
 	VerifyOtpUseCase,
 } from '../../application'
-import { InMemoryEventRepository, InMemoryUserRepository } from '../../infrastructure'
+import {
+	InMemoryEventRepository,
+	InMemoryRecoveryCodeRepository,
+	InMemoryUserRepository,
+} from '../../infrastructure'
 
 const TEST_JWT_SECRET = 'test-jwt-secret'
 const TEST_APP_NAME = 'EventHub-Test'
@@ -64,17 +68,17 @@ export function createTestApp() {
 
 	// Setup dependencies - Auth
 	const userRepository = new InMemoryUserRepository()
-	const recoveryCodeRepository = new InMemoryUserRepository() // Using InMemoryUserRepository as mock for recovery codes
+	const recoveryCodeRepository = new InMemoryRecoveryCodeRepository()
 
 	const registerUseCase = new RegisterUseCase(userRepository)
 	const loginUseCase = new LoginUseCase(userRepository, TEST_JWT_SECRET)
 	const setupOtpUseCase = new SetupOtpUseCase(userRepository, TEST_APP_NAME)
 	const verifyOtpUseCase = new VerifyOtpUseCase(
 		userRepository,
-		recoveryCodeRepository as any,
+		recoveryCodeRepository,
 		TEST_JWT_SECRET,
 	)
-	const disableOtpUseCase = new DisableOtpUseCase(userRepository, recoveryCodeRepository as any)
+	const disableOtpUseCase = new DisableOtpUseCase(userRepository, recoveryCodeRepository)
 
 	const authController = new AuthController(
 		registerUseCase,

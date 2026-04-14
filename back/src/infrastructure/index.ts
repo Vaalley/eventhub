@@ -1,4 +1,5 @@
 export { InMemoryEventRepository } from './repositories/InMemoryEventRepository'
+export { InMemoryRecoveryCodeRepository } from './repositories/InMemoryRecoveryCodeRepository'
 export { InMemoryUserRepository } from './repositories/InMemoryUserRepository'
 export { PrismaEventRepository } from './repositories/PrismaEventRepository'
 export { PrismaUserRepository } from './repositories/PrismaUserRepository'
