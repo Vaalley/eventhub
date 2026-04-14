@@ -17,7 +17,10 @@ export class InMemoryRecoveryCodeRepository implements RecoveryCodeRepositoryInt
 
 	async findByUserId(userId: string): Promise<RecoveryCodeData[]> {
 		const codes = this.recoveryCodes.get(userId) || []
-		return codes.map((code) => ({ ...code }))
+		return codes.map((code) => ({
+			...code,
+			createdAt: code.createdAt ? new Date(code.createdAt) : undefined,
+		}))
 	}
 
 	async markAsUsed(id: string): Promise<void> {
