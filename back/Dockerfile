@@ -86,4 +86,4 @@ USER bun
 EXPOSE 3000
 
 # Run the application
-CMD ["bun", "run", "main.js"]
+CMD ["bun", "run", "main.ts"]
