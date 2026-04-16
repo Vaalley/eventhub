@@ -117,9 +117,9 @@ async function start() {
 		analyticsController = new AnalyticsController(trackPageViewUseCase, getPageViewStatsUseCase)
 		app.use('/api/analytics', createAnalyticsRoutes(analyticsController, auth))
 
-		app.listen(port, () => {
-			console.log(`Server running on http://localhost:${port}`)
-			console.log(`Swagger docs: http://localhost:${port}/api-docs`)
+		app.listen(Number(port), '0.0.0.0', () => {
+			console.log(`Server running on http://0.0.0.0:${port}`)
+			console.log(`Swagger docs: http://0.0.0.0:${port}/api-docs`)
 		})
 	} catch (error) {
 		console.error('Failed to start server:', error)
