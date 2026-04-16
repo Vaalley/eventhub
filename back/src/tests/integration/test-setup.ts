@@ -21,11 +21,9 @@ import {
 	UpdateEventUseCase,
 	VerifyOtpUseCase,
 } from '../../application'
-import {
-	InMemoryEventRepository,
-	InMemoryRecoveryCodeRepository,
-	InMemoryUserRepository,
-} from '../../infrastructure'
+import { InMemoryEventRepository } from '../../infrastructure/repositories/InMemoryEventRepository'
+import { InMemoryRecoveryCodeRepository } from '../../infrastructure/repositories/InMemoryRecoveryCodeRepository'
+import { InMemoryUserRepository } from '../../infrastructure/repositories/InMemoryUserRepository'
 
 const TEST_JWT_SECRET = 'test-jwt-secret'
 const TEST_APP_NAME = 'EventHub-Test'
