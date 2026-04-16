@@ -1,10 +1,10 @@
-import { beforeAll, afterAll, describe, expect, it } from 'bun:test'
+import { afterAll, beforeAll, describe, expect, it } from 'bun:test'
 import {
 	createTestApp,
 	setupTestDatabase,
-	teardownTestDatabase,
 	startTestServer,
 	stopTestServer,
+	teardownTestDatabase,
 } from './test-setup'
 
 describe('Auth Integration Tests', () => {
