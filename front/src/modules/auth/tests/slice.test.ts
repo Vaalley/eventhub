@@ -23,6 +23,7 @@ describe('authSlice', () => {
 				removeItem: () => {},
 				clear: () => {},
 			}
+			// biome-ignore lint/suspicious/noExplicitAny: Required to mock globalThis in test environment
 			;(globalThis as any).localStorage = localStorageMock
 		}
 		localStorage.clear()
