@@ -61,7 +61,7 @@ services:
       target: development
     container_name: eventhub-backend
     ports:
-      - "3000:3000"
+      - "${BACKEND_PORT:-3000}:3000"
     volumes:
       - ./back:/app
       - backend_node_modules:/app/node_modules
