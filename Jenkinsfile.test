@@ -1,0 +1,57 @@
+pipeline {
+    agent any
+    
+    parameters {
+        string(
+            name: 'BRANCH_TO_TEST',
+            defaultValue: env.BRANCH_NAME ?: 'main',
+            description: 'Branch to test (leave empty to use the branch that triggered the build)'
+        )
+    }
+    
+    environment {
+        PATH = "/root/.bun/bin:${env.PATH}"
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                git branch: params.BRANCH_TO_TEST ?: env.BRANCH_NAME ?: 'main', url: 'https://github.com/Vaalley/eventhub.git'
+            }
+        }
+
+        stage('Install Bun') {
+            steps {
+                sh 'curl -fsSL https://bun.sh/install | bash'
+            }
+        }
+
+        stage('Lint') {
+            steps {
+                sh 'bun run lint'
+            }
+        }
+
+        stage('Install Dependencies') {
+            steps {
+                dir('back') {
+                    sh 'bun install'
+                    sh 'bun prisma generate'
+                }
+            }
+        }
+
+        stage('Test') {
+            steps {
+                dir('back') {
+                    sh 'bun test'
+                }
+            }
+        }
+    }
+
+    post {
+        success { echo 'Pipeline réussi !' }
+        failure { echo 'Pipeline échoué !' }
+    }
+}

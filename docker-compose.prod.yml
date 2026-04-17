@@ -1,8 +1,7 @@
 services:
   # MongoDB Database
   mongodb:
-    build:
-      context: ./mongo
+    image: mongo:8.0-noble
     container_name: eventhub-mongodb-prod
     ports:
       - "27017:27017"
@@ -13,11 +12,36 @@ services:
     restart: always
     environment:
       - MONGO_INITDB_DATABASE=eventhub
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/test --quiet
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # PostgreSQL Database
+  postgres:
+    image: postgres:16-alpine
+    container_name: eventhub-postgres-prod
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-eventhub}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-eventhub}
+      POSTGRES_DB: ${POSTGRES_DB:-eventhub}
+    volumes:
+      - postgres_data_prod:/var/lib/postgresql/data
+    networks:
+      - eventhub-network-prod
+    restart: always
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-eventhub} -d ${POSTGRES_DB:-eventhub}" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
   # Redis Cache
   redis:
-    build:
-      context: ./redis
+    image: redis:8.2-alpine
     container_name: eventhub-redis-prod
     ports:
       - "6379:6379"
@@ -26,6 +50,11 @@ services:
     networks:
       - eventhub-network-prod
     restart: always
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   # Backend API (Production)
   backend:
@@ -36,17 +65,30 @@ services:
     ports:
       - "3000:3000"
     environment:
-      - NODE_ENV=production
-      - PORT=3000
-      - MONGODB_URI=mongodb://mongodb:27017/eventhub
-      - REDIS_HOST=redis
-      - REDIS_PORT=6379
+      - NODE_ENV=${NODE_ENV:-production}
+      - PORT=${PORT:-3000}
+      - MONGODB_URI=${MONGODB_URI:-mongodb://mongodb:27017/eventhub}
+      - REDIS_HOST=${REDIS_HOST:-redis}
+      - REDIS_PORT=${REDIS_PORT:-6379}
+      - DATABASE_URL=postgresql://${POSTGRES_USER:-eventhub}:${POSTGRES_PASSWORD:-eventhub}@postgres:5432/${POSTGRES_DB:-eventhub}
+      - JWT_SECRET=${JWT_SECRET}
+      - CORS_ORIGIN=${CORS_ORIGIN:-https://mydomain.com}
     depends_on:
-      - mongodb
-      - redis
+      postgres:
+        condition: service_healthy
+      mongodb:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
     networks:
       - eventhub-network-prod
     restart: always
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3000/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
 
   # Frontend (Production with Nginx)
   frontend:
@@ -58,26 +100,43 @@ services:
     ports:
       - "8080:80"
     environment:
-      - NODE_ENV=production
+      - NODE_ENV=${NODE_ENV:-production}
+      - VITE_API_URL=${VITE_API_URL:-https://mydomain.com/api}
     depends_on:
-      - backend
+      backend:
+        condition: service_healthy
     networks:
       - eventhub-network-prod
     restart: always
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
 
   # Nginx Reverse Proxy
   nginx:
     build:
       context: ./nginx
+      args:
+        BUILD_ENV: prod
     container_name: eventhub-nginx-prod
     ports:
       - "80:80"
     depends_on:
-      - frontend
-      - backend
+      frontend:
+        condition: service_healthy
+      backend:
+        condition: service_healthy
     networks:
       - eventhub-network-prod
     restart: always
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
 
 networks:
   eventhub-network-prod:
@@ -85,4 +144,5 @@ networks:
 
 volumes:
   mongodb_data_prod:
+  postgres_data_prod:
   redis_data_prod:

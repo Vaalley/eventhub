@@ -1,0 +1,104 @@
+pipeline {
+    agent any
+    
+    parameters {
+        string(
+            name: 'BRANCH_TO_DEPLOY',
+            defaultValue: 'main',
+            description: 'Branch to deploy'
+        )
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                git branch: params.BRANCH_TO_DEPLOY, url: 'https://github.com/Vaalley/eventhub.git'
+            }
+        }
+
+        stage('Stop Previous Instance') {
+            steps {
+                sh '''
+                    docker compose down || true
+                    docker stop eventhub-backend eventhub-frontend || true
+                    docker rm eventhub-backend eventhub-frontend || true
+                '''
+            }
+        }
+
+        stage('Build Backend Image') {
+            steps {
+                sh '''
+                    docker build -t eventhub-backend:dev ./back --target development
+                '''
+            }
+        }
+
+        stage('Build Frontend Image') {
+            steps {
+                sh '''
+                    docker build -t eventhub-frontend:dev -f ./front/Dockerfile --target development .
+                '''
+            }
+        }
+
+        stage('Start Services') {
+            steps {
+                sh '''
+                    export BACKEND_PORT=3001
+                    docker compose up -d postgres mongodb redis
+                    NETWORK_NAME=$(docker network ls --filter name=eventhub -q | head -1)
+                    docker run -d --name eventhub-backend \
+                        --network ${NETWORK_NAME} \
+                        -p ${BACKEND_PORT:-3001}:3000 \
+                        -e NODE_ENV=development \
+                        -e PORT=3000 \
+                        -e MONGODB_URI=mongodb://mongodb:27017/eventhub \
+                        -e REDIS_HOST=redis \
+                        -e REDIS_PORT=6379 \
+                        -e DATABASE_URL=postgresql://eventhub:eventhub@postgres:5432/eventhub \
+                        -e JWT_SECRET=eventhub-jwt-secret-dev-only \
+                        -e APP_NAME=EventHub \
+                        eventhub-backend:dev
+                    docker run -d --name eventhub-frontend \
+                        --network ${NETWORK_NAME} \
+                        -p 5173:5173 \
+                        -e NODE_ENV=development \
+                        -e VITE_API_URL=http://localhost:${BACKEND_PORT:-3001} \
+                        eventhub-frontend:dev
+                '''
+            }
+        }
+
+        stage('Wait for Services') {
+            steps {
+                sh '''
+                    echo "Waiting for services to be healthy..."
+                    sleep 30
+                    docker ps
+                '''
+            }
+        }
+
+        stage('Health Check') {
+            steps {
+                sh '''
+                    docker exec eventhub-backend wget -q -O - http://localhost:3000/ || exit 1
+                    docker exec eventhub-frontend wget -q -O - http://localhost:5173/ || exit 1
+                '''
+            }
+        }
+    }
+
+    post {
+        success { echo 'App deployed and running successfully! Backend on port 3001, Frontend on port 5173' }
+        failure { 
+            echo 'Deployment failed!'
+            sh 'docker logs eventhub-backend || true'
+            sh 'docker logs eventhub-frontend || true'
+            sh 'docker stop eventhub-backend eventhub-frontend || true'
+            sh 'docker rm eventhub-backend eventhub-frontend || true'
+            sh 'docker compose down || true'
+        }
+    }
+}

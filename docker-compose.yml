@@ -1,8 +1,7 @@
 services:
   # MongoDB Database
   mongodb:
-    build:
-      context: ./mongo
+    image: mongo:8.0-noble
     container_name: eventhub-mongodb
     ports:
       - "27017:27017"
@@ -11,6 +10,11 @@ services:
     networks:
       - eventhub-network
     restart: unless-stopped
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/test --quiet
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   # PostgreSQL Database
   postgres:
@@ -19,9 +23,9 @@ services:
     ports:
       - "5432:5432"
     environment:
-      POSTGRES_USER: eventhub
-      POSTGRES_PASSWORD: eventhub
-      POSTGRES_DB: eventhub
+      POSTGRES_USER: ${POSTGRES_USER:-eventhub}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-eventhub}
+      POSTGRES_DB: ${POSTGRES_DB:-eventhub}
     volumes:
       - postgres_data:/var/lib/postgresql/data
     networks:
@@ -35,8 +39,7 @@ services:
 
   # Redis Cache
   redis:
-    build:
-      context: ./redis
+    image: redis:8.2-alpine
     container_name: eventhub-redis
     ports:
       - "6379:6379"
@@ -45,6 +48,11 @@ services:
     networks:
       - eventhub-network
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   # Backend API
   backend:
@@ -53,25 +61,35 @@ services:
       target: development
     container_name: eventhub-backend
     ports:
-      - "3000:3000"
+      - "${BACKEND_PORT:-3000}:3000"
     volumes:
       - ./back:/app
       - backend_node_modules:/app/node_modules
     environment:
-      - NODE_ENV=development
-      - PORT=3000
-      - MONGODB_URI=mongodb://mongodb:27017/eventhub
-      - REDIS_HOST=redis
-      - REDIS_PORT=6379
-      - DATABASE_URL=postgresql://eventhub:eventhub@postgres:5432/eventhub
-      - JWT_SECRET=eventhub-jwt-secret-dev-only
-      - APP_NAME=EventHub
+      - NODE_ENV=${NODE_ENV:-development}
+      - PORT=${PORT:-3000}
+      - MONGODB_URI=${MONGODB_URI:-mongodb://mongodb:27017/eventhub}
+      - REDIS_HOST=${REDIS_HOST:-redis}
+      - REDIS_PORT=${REDIS_PORT:-6379}
+      - DATABASE_URL=postgresql://${POSTGRES_USER:-eventhub}:${POSTGRES_PASSWORD:-eventhub}@postgres:5432/${POSTGRES_DB:-eventhub}
+      - JWT_SECRET=${JWT_SECRET:-eventhub-jwt-secret-dev-only}
+      - APP_NAME=${APP_NAME:-EventHub}
     depends_on:
       postgres:
+        condition: service_healthy
+      mongodb:
+        condition: service_healthy
+      redis:
         condition: service_healthy
     networks:
       - eventhub-network
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3000/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
 
   # Frontend
   frontend:
@@ -84,30 +102,46 @@ services:
       - "5173:5173"
     volumes:
       - ./front:/app
-      - /app/node_modules
+      - frontend_node_modules:/app/node_modules
       - ./tsconfig.base.json:/tsconfig.base.json:ro
     environment:
-      - NODE_ENV=development
-      - VITE_API_URL=http://localhost/api
+      - NODE_ENV=${NODE_ENV:-development}
+      - VITE_API_URL=${VITE_API_URL:-http://localhost/api}
     depends_on:
-      - backend
+      backend:
+        condition: service_healthy
     networks:
       - eventhub-network
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:5173/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
 
   # Nginx Reverse Proxy
   nginx:
     build:
       context: ./nginx
+      args:
+        BUILD_ENV: dev
     container_name: eventhub-nginx
     ports:
       - "80:80"
     depends_on:
-      - frontend
-      - backend
+      frontend:
+        condition: service_healthy
+      backend:
+        condition: service_healthy
     networks:
       - eventhub-network
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
 
 networks:
   eventhub-network:
@@ -118,3 +152,4 @@ volumes:
   postgres_data:
   redis_data:
   backend_node_modules:
+  frontend_node_modules:

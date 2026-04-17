@@ -1,8 +1,10 @@
 node_modules
 .git
 .gitignore
-*.md
+.gitattributes
 .env
+.env.local
+.env.*.local
 .nx
 dist
 training
@@ -11,3 +13,32 @@ front/node_modules
 mongo
 redis
 nginx
+
+# IDE
+.vscode
+.idea
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Documentation
+*.md
+docs/
+
+# Docker
+Dockerfile*
+docker-compose*.yml
+.dockerignore
+
+# CI/CD
+.github
+.gitlab-ci.yml
+.travis.yml
+
+# Logs
+*.log
+logs/

@@ -3,10 +3,10 @@
 	"version": "1.0.0",
 	"description": "EventHub API server",
 	"type": "module",
-	"main": "main.js",
+	"main": "main.ts",
 	"scripts": {
-		"dev": "bun --watch main.js",
-		"start": "bun run main.js",
+		"dev": "bun --watch main.ts",
+		"start": "bun run main.ts",
 		"test": "bun test"
 	},
 	"prisma": {
